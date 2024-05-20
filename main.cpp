@@ -10,6 +10,21 @@
 //autor sem ordenar nada simp encadeada
 //info autor simp encadeada aparte //nao apagar nunca
 
+struct tpAutor {
+    char nome[30],sobrenome[30];
+    tpAutor *proximo;
+};
+struct tpListaAutores {
+    //informacao
+    tpAutor *autor;
+    tpListaAutores *proximo;
+};
+struct tpLivros {
+    char titulo[30];
+    int ano,paginas;
+    tpListaAutores *autores;
+    tpLivros *anterior, *proximo;
+};
 struct tpEditora {
     char editora[30];
     tpLivros *livros;
@@ -20,24 +35,6 @@ struct tpDescritor {
     tpEditora *inicio, *fim;
     int qtde;
 };
-
-struct tpLivros {
-    char titulo[30];
-    int ano,paginas;
-    tpListaAutores *autores;
-    tpLivros *anterior, *proximo;
-};
-
-struct tpAutor {
-    char nome[30],sobrenome[30];
-    tpAutor *proximo;
-};
-
-struct tpListaAutores {
-    //informacao
-    tpAutor *autor;
-    tpListaAutores *proximo;
-};
 //nao alterar structs
 struct tpLivroBinario {
     char autores[100],tituloLivro[50],editora[50];
@@ -46,22 +43,28 @@ struct tpLivroBinario {
 
 void arquivoTextoParaBinario () {
     tpLivroBinario reg;
-    FILE *ponteiroTxt = fopen("livros.txt","r");
-    FILE *ponteiroBinario = fopen("livrosBinario.dat","rb+");
 
-    fscanf(ponteiroTxt,"%[^|];%s;%[^|]%s;[^|];%s;%d,%d\n");
-    while (!feof(ponteiroTxt)) {
-        fscanf(ponteiroTxt,"%[^|];%s;%[^|]%s;[^|];%s;%d,%d\n");
-        fread();
-        fwrite();
-    }    
-    fscanf(ponteiroTxt,"%[^|];%s;%[^|]%s;[^|];%s;%d,%d\n");
-    fread();
-    fwrite();
+    FILE *ponteiroTxt = fopen("livros.txt", "r");
+    FILE *ponteiroBinario = fopen("livrosBinario.dat", "wb+");
 
-    fclose(ponteiroBinario);
-    fclose(ponteiroTxt);
-
+    if (!ponteiroTxt || !ponteiroBinario) {
+        fprintf(stderr, "Erro ao abrir arquivos.\n");
+    } else {
+        fseek(ponteiroBinario, 0, SEEK_END); 
+        if (ftell(ponteiroBinario) == 0) { 
+            rewind(ponteiroBinario); 
+            
+            fscanf(ponteiroTxt, "%[^|]|%[^|]|%[^|]|%d|%d\n",reg.autores, reg.tituloLivro, reg.editora, &reg.ano, &reg.paginas);
+            while (!feof(ponteiroTxt)) {
+                fscanf(ponteiroTxt, "%[^|]|%[^|]|%[^|]|%d|%d\n",reg.autores, reg.tituloLivro, reg.editora, &reg.ano, &reg.paginas);
+                fwrite(&reg, sizeof(tpLivroBinario), 1, ponteiroBinario);
+            }
+        } else {
+            fprintf(stderr, "O arquivo binário já contém dados.\n");
+        }
+        fclose(ponteiroBinario);
+        fclose(ponteiroTxt);
+    }
 }
 
 void inicializarDescritor (tpDescritor &descritor) {    
@@ -71,8 +74,14 @@ void inicializarDescritor (tpDescritor &descritor) {
 
 int main () {
     
+    tpAutor *autor;
+    tpListaAutores *listaAutores;
+    tpLivros *livros;
+    tpEditora *editora;
     tpDescritor descritor;
+
     inicializarDescritor(descritor);
+    arquivoTextoParaBinario();
     
     return 0;
 }
