@@ -1,8 +1,8 @@
-ZIVIANI, Nivio|Projeto de algoritmos: com implementações em Pascal e C|Thomson|2010|660
-CELES, Waldemar; CERQUEIRA, Renato; RANGEL NETTO, José Lucas Mourão,|Introdução a estruturas de dados: com técnicas de programação em C|Elsevier|2004|294
-PEREIRA, Silvio do Lago|Estruturas de dados fundamentais: conceitos e aplicações|Érica|2008|264
+ZIVIANI, Nivio|Projeto de algoritmos: com implementacões em Pascal e C|Thomson|2010|660
+CELES, Waldemar; CERQUEIRA, Renato; RANGEL NETTO, Jose Lucas Mourao|Introducao a estruturas de dados: com tecnicas de programacao em C|Elsevier|2004|294
+PEREIRA, Silvio do Lago|Estruturas de dados fundamentais: conceitos e aplicacões|Erica|2008|264
 TENENBAUM, Aaron M.; LANGSAM, Yedidyah; AUGENSTEIN, Moshe; SOUZA, Teresa Cristina Felix |Estruturas de dados usando C|Makron Books|1995|884
 SANTOS, Clesio Saraiva; FURTADO, Antonio; VELOSO, Paulo A. S.|Estruturas de dados|Campus|1986|228
-SALIBA, Walter Luiz Caram; ASSUMPÇÃO FILHO, Milton Mira de|Técnicas de programação: uma abordagem estruturada|Makron Books|1993|141
-SZWARCFITER, Jayme Luiz; MARKENZON, Lilian|Estruturas de dados e seus algoritmos|Livros Técnicos e Científicos|1994|320
+SALIBA, Walter Luiz Caram; ASSUMPCAO FILHO, Milton Mira de|Tecnicas de programacao: uma abordagem estruturada|Makron Books|1993|141
+SZWARCFITER, Jayme Luiz; MARKENZON, Lilian|Estruturas de dados e seus algoritmos|Livros Tecnicos e Científicos|1994|320
 WIRTH, Niklaus; CHENG, Mei Lee|Algoritmos e estruturas de dados|Prentice-Hall do Brasil|1989|225

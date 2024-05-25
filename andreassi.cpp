@@ -72,6 +72,8 @@ void inicializarDescritor (tpDescritor &descritor) {
     descritor.qtde=0;
 }
 
+
+
 int main () {
     
     tpAutor *autor;
