@@ -27,11 +27,10 @@ struct tpLivros {
     tpLivros *anterior, *proximo;
 };
 struct tpEditora {
-    char editora[30];
+    char editora[100];
     tpLivros *livros;
     tpEditora *proximo;
 };
-
 struct tpDescritor {
     tpEditora *inicio, *fim;
     int qtde;
@@ -129,22 +128,17 @@ tpAutor *inicializarEstruturaAutores () {
     return autor;
 }
 
-tpLivros inicializarEstruturaLivros (tpLivros *livros,tpLivroBinario arquivo) {
-    tpLivros *livro = new tpLivros;
-    int i=0;
-    char nome[50],sobrenome[50];
+tpLivros *novaCaixaLivro (tpLivroBinario arquivo) {
+    tpLivros *livros = new tpLivros;
 
     livros->anterior=NULL;
     livros->proximo = NULL;
     livros->ano = arquivo.ano;
     livros->paginas = arquivo.paginas;
-    livro->autores = NULL;
-    strcpy(livro->titulo,arquivo.tituloLivro);
+    livros->autores = NULL;
+    strcpy(livros->titulo,arquivo.tituloLivro);
 
-
-
-
-
+    return livros;
 }
 
 void exibir(){
@@ -162,16 +156,171 @@ void exibir(){
 	}
 }
 
-tpEditora *novaCaixaEditora (tpLivroBinario arquivo, tpAutor *autor,tpListaAutores *listaAutores) {
+tpEditora *novaCaixaEditora (char editora[100]) {
     tpEditora *novo = new tpEditora;
-    tpAutor *aux;
 
-    strcpy(novo->editora,arquivo.editora);
-    // novo->livros = novaCaixaLivro(arquivo,autor,listaAutores);
+    strcpy(novo->editora,editora);
     novo->proximo = NULL;
     return novo;
 }
 
+tpAutor *buscaAutor (tpAutor *autor,char nome[100],char sobrenome[100]) {
+    tpAutor *aux;
+
+    while(aux->proximo != NULL) {
+        if(strcmp(aux->nome,nome) != 0 && strcmp(aux->sobrenome,sobrenome) != 0) {
+            aux=aux->proximo;
+        }
+        else {
+            return aux;
+        } 
+    }
+    
+    if(strcmp(aux->nome,nome) == 0 && strcmp(aux->sobrenome,sobrenome) == 0) {
+        return aux;
+    }
+    else {
+        return NULL;
+    }
+}
+
+tpListaAutores *novaCaixaListaAutores () {
+    tpListaAutores *novoAutor = new tpListaAutores;
+
+    novoAutor->endereco=NULL;
+    novoAutor->proximo=NULL;
+
+    return novoAutor;
+}
+
+void separarAutores(char *stringAutores, char vetorAutores[][100], int *tl)
+{
+    char *token;
+    *tl = 0;
+    token = strtok(stringAutores, ";");
+    while (token != NULL)
+    {
+        while (*token == ' ')
+            token++;
+        strcpy(vetorAutores[*tl], token);
+        (*tl)++;
+        token = strtok(NULL, ";");
+    }
+}
+
+void recuperarSobrenome(char *stringAutores, char *sobrenome)
+{
+    char *posVirgula = strchr(stringAutores, ','); 
+    if (posVirgula != NULL)
+    {
+        strncpy(sobrenome, stringAutores, posVirgula - stringAutores); 
+        sobrenome[posVirgula - stringAutores] = '\0';        
+    }
+    else
+    {
+        strcpy(sobrenome, stringAutores);
+    }
+}
+
+void recuperarPrimeiroNome(char *stringAutores, char *primeiro_nome)
+{
+    char *posVirgula = strchr(stringAutores, ','); 
+    if (posVirgula != NULL)
+    {
+        posVirgula++; 
+        while (*posVirgula == ' ')
+            posVirgula++;                  
+        strcpy(primeiro_nome, posVirgula); 
+    }
+    else
+    {
+        strcpy(primeiro_nome, "");
+    }
+}
+
+// char arrayAutores[10][100];
+//         int tl;
+//         separarAutores(aux.autores, arrayAutores, &tl);
+//         for (int i = 0; i < tl; i++)
+//         {
+//             char nome[100];
+//             recuperarPrimeiroNome(arrayAutores[i], nome);
+//             char sobrenome[100];
+//             recuperarSobrenome(arrayAutores[i], sobrenome);
+//          }
+
+
+tpEditora *incializarEstruraPrincipal(tpAutor *autor,tpDescritor &descritor,tpEditora *editora) {
+
+    tpLivroBinario aux;
+    tpLivros *novoLivro;
+    tpEditora *novaEditora;
+    tpListaAutores *novoAutorEndereco,*aux2,*aux3;
+    tpAutor *autorBusca;
+    int tlSobrenome,i,tlNome;
+    char nome[100],sobrenome[100];
+    FILE *ponteiro = fopen("livrosBinario.dat","rb+");
+    rewind(ponteiro);
+
+    fread(&aux,sizeof(tpLivroBinario),1,ponteiro);
+    while(!feof(ponteiro)) {
+        if(descritor.qtde == 0) {
+            novaEditora = novaCaixaEditora(aux.editora);
+            novoLivro = novaCaixaLivro(aux);
+            strcpy(novoLivro->titulo,aux.tituloLivro);
+            novoLivro->ano = aux.ano;
+            novoLivro->paginas = aux.paginas;
+            
+            char arrayAutores[10][100];
+            int tl;
+            separarAutores(aux.autores, arrayAutores, &tl);
+            novoAutorEndereco = novaCaixaListaAutores();
+            novoLivro->autores = novoAutorEndereco;
+            for (int i = 0; i < tl; i++)
+            {
+                if(novoAutorEndereco->endereco == NULL) {
+                    
+                    recuperarPrimeiroNome(arrayAutores[i], nome);
+                    recuperarSobrenome(arrayAutores[i], sobrenome);
+                    
+                    autorBusca = buscaAutor(autor,nome,sobrenome);
+                    
+                    if(autorBusca != NULL) {
+                        novoAutorEndereco->endereco = autorBusca;
+                    }
+                    
+                }
+                else {
+                    aux2 = novaCaixaListaAutores();
+                    aux3 = novoAutorEndereco;
+                    while(aux3->proximo != NULL) {
+                        aux3 = aux3->proximo;
+                    }
+
+                    recuperarPrimeiroNome(arrayAutores[i], nome);
+                    recuperarSobrenome(arrayAutores[i], sobrenome);
+                    
+                    autorBusca = buscaAutor(autor,nome,sobrenome);
+                    
+                    if(autorBusca != NULL) {
+                        aux2->endereco = autorBusca;
+                        aux3->proximo = aux2;
+                    }
+                }
+            }
+            
+            descritor.qtde++;
+            descritor.fim = novaEditora;
+            descritor.inicio = novaEditora;
+        }
+        else {
+            
+        }
+        fread(&aux,sizeof(tpLivroBinario),1,ponteiro);
+    }
+    fclose(ponteiro);
+    return editora;
+}
 
 void ExibeAutores(tpAutor *autor){
 	printf("Nome: %s %s\n",autor->nome,autor->sobrenome);
@@ -179,21 +328,35 @@ void ExibeAutores(tpAutor *autor){
 		ExibeAutores(autor->proximo);
 }
 
+void exibeEditora(tpEditora *editora) {
+    printf("Nome: %s",editora->editora);
+    if(editora->proximo)
+        exibeEditora(editora->proximo);
+}
+
 int main () {
     
-    arquivoTextoParaBinario();
-    exibir();
-    // setlocale(LC_ALL, "Portuguese");
-    // tpAutor *autor;
-    // autor= inicializarEstruturaAutores();
+    tpDescritor descritor;
+    inicializarDescritor(descritor);
+    // arquivoTextoParaBinario();
+    // exibir();
+
+    tpAutor *autor = NULL;
+    autor = inicializarEstruturaAutores();
+    // tpEditora *editora = NULL;
+    // editora = incializarEstruraPrincipal(autor,descritor,editora);
+    // exibeEditora(editora);
+
+    // autor = inicializarEstruturaAutores();
     // ExibeAutores(autor);
     // tpListaAutores *listaAutores;
     // tpLivros *livros;
-    // tpEditora *editora;
-    // tpDescritor descritor;
+    
+
+    
 
 
-    // inicializarDescritor(descritor);
+    
     // exibir();
     
     
