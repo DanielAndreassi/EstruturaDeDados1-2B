@@ -43,7 +43,7 @@ struct tpDescritor
 // nao alterar structs
 struct tpLivroBinario
 {
-    char autores[200], tituloLivro[50], editora[50];
+    char autores[200], tituloLivro[50], editora[100];
     int ano, paginas;
 };
 
@@ -389,6 +389,7 @@ void incializarEstruraPrincipal(tpAutor *autor, tpDescritor &descritor, tpEditor
             {
                 editoraAuxiliar = editoraAuxiliar->proximo;
             }
+            
             if (strcmp(editoraAuxiliar->editora, aux.editora) == 0)
             {
                 // é mais um livro da mesma editora que é a editoraAuxiliar
@@ -400,6 +401,7 @@ void incializarEstruraPrincipal(tpAutor *autor, tpDescritor &descritor, tpEditor
                 char arrayAutores[10][100];
                 int tl;
                 separarAutores(aux.autores, arrayAutores, &tl);
+                
                 tpListaAutores *novoAutorEndereco = new tpListaAutores;
                 novoAutorEndereco->endereco = NULL;
                 novoAutorEndereco->proximo = NULL;
@@ -655,14 +657,11 @@ int main()
     tpAutor *autor = NULL;
     autor = inicializarEstruturaAutores();
     tpEditora *editora = NULL;
-<<<<<<< HEAD
-    editora = incializarEstruraPrincipal(autor,descritor,editora);
+    incializarEstruraPrincipal(autor,descritor,editora);
     exibeEditora(editora);
-=======
     incializarEstruraPrincipal(autor, descritor, editora);
     // exibeEditora(editora);
     printf("\n\nEDITORA INCIO %s\t EDITORA FIM %s\tQUANTIDADE %d\n", descritor.inicio->editora, descritor.fim->editora, descritor.qtde);
->>>>>>> 733d4c946a583b385a506950ec29881a85448f6e
 
     // autor = inicializarEstruturaAutores();
     printf("\n\n");
