@@ -411,19 +411,36 @@ void inicializarEstruturaPrincipal(tpAutor *autor, tpDescritor &descritor)
     fclose(ponteiroArquivo); 
 }
 
-void ExibeAutores(tpAutor *autor)
+void exibeAutores(tpAutor *autor)
 {
     printf("Nome: %s %s\n", autor->nome, autor->sobrenome);
     if (autor->proximo)
-        ExibeAutores(autor->proximo);
+        exibeAutores(autor->proximo);
+}
+
+void exibeListaAutor(tpListaAutores *lista) {
+    printf("\n%s\t%s\t\n",lista->endereco->nome,lista->endereco->sobrenome);
+    if(lista->proximo) {
+        exibeListaAutor(lista->proximo);
+    }
+}
+
+void exibirLivro(tpLivros *livros) {
+    printf("\n%s\n",livros->titulo);
+    exibeListaAutor(livros->autores);
+    if(livros->proximo) {
+        exibirLivro(livros->proximo);
+    }
 }
 
 void exibeEditora(tpEditora *editora)
 {
     printf("\nNome: %s", editora->editora);
+    exibirLivro(editora->livros);
     if (editora->proximo)
         exibeEditora(editora->proximo);
 }
+
 
 int main()
 {
@@ -435,6 +452,8 @@ int main()
     autor = inicializarEstruturaAutores();
     inicializarEstruturaPrincipal(autor,descritor);
     
+    exibeEditora(descritor.inicio);
+    //exibeAutores(autor);
 
     return 0;
 }
