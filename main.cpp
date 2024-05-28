@@ -343,9 +343,9 @@ int main () {
 
     tpAutor *autor = NULL;
     autor = inicializarEstruturaAutores();
-    // tpEditora *editora = NULL;
-    // editora = incializarEstruraPrincipal(autor,descritor,editora);
-    // exibeEditora(editora);
+    tpEditora *editora = NULL;
+    editora = incializarEstruraPrincipal(autor,descritor,editora);
+    exibeEditora(editora);
 
     // autor = inicializarEstruturaAutores();
     // ExibeAutores(autor);
