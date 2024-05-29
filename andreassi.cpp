@@ -232,57 +232,6 @@ tpLivros *novoLivro(tpLivroBinario arquivo,tpAutor *autor)
             }
         }
     }
-
-    // while(index < strlen(arquivo.autores)) {
-    //     for(tl_sobrenome = 0; index < strlen(arquivo.autores) && arquivo.autores[index] != ','; index++)
-    //         sobrenome[tl_sobrenome++] = arquivo.autores[index];
-    //     sobrenome[tl_sobrenome] = '\0';
-    //     index++;
-    //     for(tl_nome = 0; index < strlen(arquivo.autores) && arquivo.autores[index] != ';'; index++)
-    //         nome[tl_nome++] = arquivo.autores[index];
-    //     nome[tl_nome++] = '\0';
-    //     index++;
-        
-    //     if(stricmp(autor->nome,nome) != 0 && stricmp(autor->sobrenome,sobrenome) != 0) {
-    //         autorAuxiliarBusca = autor;
-    //         while(stricmp(autorAuxiliarBusca->proximo->nome,nome) != 0 && stricmp(autorAuxiliarBusca->proximo->sobrenome,sobrenome) != 0) {
-    //             autorAuxiliarBusca=autorAuxiliarBusca->proximo;
-    //         }
-    //         if(!livros->autores) {
-    //             livros->autores = new tpListaAutores;
-    //             livros->autores->endereco = autorAuxiliarBusca->proximo;
-    //             livros->autores->proximo = NULL;
-    //         }
-    //         else {
-    //             ponteiroAutorAuxiliar = livros->autores;
-
-    //             while(ponteiroAutorAuxiliar->proximo) {
-    //                 ponteiroAutorAuxiliar = ponteiroAutorAuxiliar->proximo;
-    //             }
-    //             novoAutor = new tpListaAutores;
-    //             novoAutor->proximo = NULL;
-    //             novoAutor->endereco = autorAuxiliarBusca->proximo;
-
-    //             ponteiroAutorAuxiliar->proximo = novoAutor;
-    //         }
-    //     }
-    //     else {
-    //         if(!livros->autores) {
-    //             livros->autores = new tpListaAutores;
-    //             livros->autores->proximo = NULL;
-    //             livros->autores->endereco = autor;
-    //         }
-    //         else {
-    //             ponteiroAutorAuxiliar = livros->autores;
-    //             while(ponteiroAutorAuxiliar->proximo) {
-    //                 ponteiroAutorAuxiliar = ponteiroAutorAuxiliar->proximo;
-    //             }
-    //             novoAutor = new tpListaAutores;
-    //             novoAutor->endereco = autor;
-    //             novoAutor->proximo = NULL;
-    //             ponteiroAutorAuxiliar->proximo = novoAutor;
-    //         }
-    //     }
     return livros;
 } 
 
