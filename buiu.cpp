@@ -62,6 +62,7 @@ void recuperarPrimeiroNome(char *stringAutores, char *primeiro_nome);
 //  tpEditora *incializarEstruraPrincipal( tpAutor *autor, tpDescritor *descritor, tpEditora *editora);
 // void ExibeAutores( tpAutor *autor);
 // void exibeEditora( tpEditora *editora);
+tpAutor *inicializarEstruturaAutores();
 
 void arquivoTextoParaBinario()
 {
@@ -108,7 +109,6 @@ tpAutor *inicializarEstruturaAutores()
     FILE *ponteiro = fopen("livrosBinario.dat", "rb+");
     tpLivroBinario aux;
     tpAutor *autorAuxiliar, *autor = NULL, *novoAutor;
-    char nome[50], sobrenome[50];
     int tlSobrenome, tlNome, i = 0;
 
     if (!ponteiro)
@@ -121,22 +121,18 @@ tpAutor *inicializarEstruturaAutores()
 
         while (!feof(ponteiro))
         {
-            i = 0;
-            while (i < strlen(aux.autores))
+            // i = 0;
+            char arrayAutores[10][100];
+            int tl;
+            separarAutores(aux.autores, arrayAutores, &tl);
+            for (int i = 0; i < tl; i++)
             {
-                for (tlSobrenome = 0; i < strlen(aux.autores) && aux.autores[i] != ','; i++)
-                {
-                    sobrenome[tlSobrenome] = aux.autores[i];
-                    tlSobrenome++;
-                }
-                for (i++, tlNome = 0; i < strlen(aux.autores) && aux.autores[i] != ';'; i++)
-                {
-                    nome[tlNome] = aux.autores[i];
-                    tlNome++;
-                }
-                sobrenome[tlSobrenome] = '\0';
-                nome[tlNome] = '\0';
-
+                char nome[100];
+                char sobrenome[100];
+                recuperarPrimeiroNome(arrayAutores[i], nome);
+                recuperarSobrenome(arrayAutores[i], sobrenome);
+                // printf("\n%s",nome);
+                // printf(" %s\n",sobrenome);
                 if (autor == NULL)
                 {
                     autor = new tpAutor;
@@ -166,9 +162,8 @@ tpAutor *inicializarEstruturaAutores()
             }
             fread(&aux, sizeof(tpLivroBinario), 1, ponteiro);
         }
-        fclose(ponteiro);
     }
-
+    fclose(ponteiro);
     return autor;
 }
 
@@ -187,20 +182,16 @@ tpLivros *novoLivro(tpLivroBinario arquivo, tpAutor *autor)
     livros->autores = NULL;
     strcpy(livros->titulo, arquivo.tituloLivro);
 
-    int index = 0;
     tpListaAutores *ponteiroAutorAuxiliar, *novoAutor;
-    while (index < strlen(arquivo.autores))
-    {
-        for (tl_sobrenome = 0; index < strlen(arquivo.autores) && arquivo.autores[index] != ','; index++)
-            sobrenome[tl_sobrenome++] = arquivo.autores[index];
-        sobrenome[tl_sobrenome] = '\0';
-        index++;
-        for (tl_nome = 0; index < strlen(arquivo.autores) && arquivo.autores[index] != ';'; index++)
-            nome[tl_nome++] = arquivo.autores[index];
-        nome[tl_nome++] = '\0';
-        index++;
 
-        if (stricmp(autor->nome, nome), stricmp(autor->sobrenome, sobrenome) != 0)
+    char arrayAutores[10][100];
+    int tl;
+    separarAutores(arquivo.autores, arrayAutores, &tl);
+    for (int i = 0; i < tl; i++)
+    {
+        recuperarPrimeiroNome(arrayAutores[i], nome);
+        recuperarSobrenome(arrayAutores[i], sobrenome);
+        if (stricmp(autor->nome, nome) != 0 && stricmp(autor->sobrenome, sobrenome) != 0)
         {
             autorAuxiliarBusca = autor;
             while (stricmp(autorAuxiliarBusca->proximo->nome, nome) != 0 && stricmp(autorAuxiliarBusca->proximo->sobrenome, sobrenome) != 0)
@@ -261,10 +252,11 @@ void exibir()
         printf("Erro ao abrir livros.dat");
     else
     {
+        printf("\n\n ## ARQUIVO BINARIO ##");
         fread(&arquivo, sizeof(tpLivroBinario), 1, ponteiro);
         while (!feof(ponteiro))
         {
-            printf("%s|%s|%s|%d|%d\n", arquivo.autores, arquivo.tituloLivro, arquivo.editora, arquivo.ano, arquivo.paginas);
+            printf("%s | %s | %s | %d | %d\n", arquivo.autores, arquivo.tituloLivro, arquivo.editora, arquivo.ano, arquivo.paginas);
             fread(&arquivo, sizeof(tpLivroBinario), 1, ponteiro);
         }
         fclose(ponteiro);
@@ -443,36 +435,115 @@ void inicializarEstruturaPrincipal(tpAutor *autor, tpDescritor &descritor)
 
 void exibeAutores(tpAutor *autor)
 {
-    printf("Nome: %s %s\n", autor->nome, autor->sobrenome);
-    if (autor->proximo)
-        exibeAutores(autor->proximo);
+    if (autor)
+    {
+        printf("Autor: %s %s\n", autor->nome, autor->sobrenome);
+        if (autor->proximo)
+            exibeAutores(autor->proximo);
+    }
 }
 
 void exibeListaAutor(tpListaAutores *lista)
 {
-    printf("\n%s\t%s\t\n", lista->endereco->nome, lista->endereco->sobrenome);
-    if (lista->proximo)
+    if (lista)
     {
-        exibeListaAutor(lista->proximo);
+        printf("\nAutor: %s, %s\n", lista->endereco->nome, lista->endereco->sobrenome);
+        if (lista->proximo)
+        {
+            exibeListaAutor(lista->proximo);
+        }
     }
 }
 
 void exibirLivro(tpLivros *livros)
 {
-    printf("\n%s\n", livros->titulo);
-    exibeListaAutor(livros->autores);
-    if (livros->proximo)
+    if (livros)
     {
-        exibirLivro(livros->proximo);
+        printf("\n## Livro: %s ##", livros->titulo);
+        exibeListaAutor(livros->autores);
+        if (livros->proximo)
+        {
+            exibirLivro(livros->proximo);
+        }
     }
 }
 
 void exibeEditora(tpEditora *editora)
 {
-    printf("\nNome: %s", editora->editora);
-    exibirLivro(editora->livros);
-    if (editora->proximo)
-        exibeEditora(editora->proximo);
+    if (editora)
+    {
+        printf("\nEditora: %s", editora->editora);
+        exibirLivro(editora->livros);
+        if (editora->proximo)
+            exibeEditora(editora->proximo);
+    }
+}
+
+void exibeLivrosEditora(tpEditora *editora)
+{
+    printf("\nEditora: %s", editora->editora);
+
+    if (editora->livros != NULL)
+    {
+        exibirLivro(editora->livros);
+        printf("\n\n");
+    }
+    else
+    {
+        printf("\n## Nao foi encontrado livro para essa editora! ##");
+    }
+    if (editora->proximo != NULL)
+    {
+        exibeLivrosEditora(editora->proximo);
+    }
+}
+
+void exibirLivroDosAutores(tpAutor *autor, tpEditora *editora)
+{
+
+    int aux;
+    tpLivros *livros;
+    tpListaAutores *listaAutorEndereco;
+    tpEditora *editoraAux;
+    printf("\n");
+    while (autor)
+    {
+
+        printf("##Autor: %s %s ##\n", autor->nome, autor->sobrenome);
+        aux = 0;
+        editoraAux = editora;
+
+        while (editoraAux)
+        {
+            livros = editoraAux->livros;
+
+            while (livros)
+            {
+                listaAutorEndereco = livros->autores;
+
+                while (listaAutorEndereco)
+                {
+
+                    if (strcmp(listaAutorEndereco->endereco->nome, autor->nome) == 0 && strcmp(listaAutorEndereco->endereco->sobrenome, autor->sobrenome) == 0)
+                    {
+
+                        printf("## Livro: %s ##\n", livros->titulo);
+                        listaAutorEndereco = NULL;
+                        aux++;
+                    }
+                    else
+                        listaAutorEndereco = listaAutorEndereco->proximo;
+                }
+                livros = livros->proximo;
+            }
+            editoraAux = editoraAux->proximo;
+        }
+        printf("\n\n");
+        if (aux == 0)
+            printf("\n## Autor sem livros registrados! ##\n");
+
+        autor = autor->proximo;
+    }
 }
 
 void excluirLivroArquivoBin(char livroAExcluir[70])
@@ -516,7 +587,7 @@ void excluirLivroEstrutura(tpDescritor &descritor, char livroAExcluir[70])
 {
     if (descritor.qtde == 0)
     {
-        printf("\nEstrutura não inicializada!\n");
+        printf("\nEstrutura nao inicializada!\n");
     }
     else
     {
@@ -537,17 +608,23 @@ void excluirLivroEstrutura(tpDescritor &descritor, char livroAExcluir[70])
             {
                 printf("\nLivro encontrado na editora %s!\n", editoraAux->editora);
                 excluiRecursivo(livrosAux->autores);
-                if (livrosAux->proximo)
+                if (!livrosAux->proximo && !livrosAux->anterior)
                 {
-                    livrosAux->proximo->anterior = livrosAux->anterior;
+                    editoraAux->livros = NULL;
                 }
-                if (livrosAux->anterior)
+                else if (!livrosAux->proximo)
                 {
-                    livrosAux->anterior->proximo = livrosAux->proximo;
+                    livrosAux->anterior->proximo = NULL;
+                }
+                else if (!livrosAux->anterior)
+                {
+                    editoraAux->livros = livrosAux->proximo;
+                    editoraAux->livros->anterior = NULL;
                 }
                 else
                 {
-                    editoraAux->livros = livrosAux->proximo;
+                    livrosAux->proximo->anterior = livrosAux->anterior;
+                    livrosAux->anterior->proximo = livrosAux->proximo;
                 }
                 delete livrosAux;
                 printf("\nLivro excluido!\n");
@@ -566,33 +643,138 @@ void excluirLivro(char livroAExcluir[70], tpDescritor &descritor)
 
 char menu()
 {
-    printf("[A] Gerar arquivo binario");
-    printf("[B] Exibir arquivo binario");
-    printf("[C] Construir estrutura");
-    printf("[D] Gerar arquivo binário");
-    printf("[E] Gerar arquivo binário");
-    printf("[F] Gerar arquivo binário");
-    printf("[G] Gerar arquivo binário");
-    printf("[H] Gerar arquivo binário");
+    printf("[A] Gerar arquivo binario\n");
+    printf("[B] Exibir arquivo binario\n");
+    printf("[C] Construir estrutura\n");
+    printf("[D] Excluir livro\n");
+    printf("[E] Todos os livros de cada autor\n");
+    printf("[F] Todos os livros de cada editora\n");
+    printf("[G] Todos os autores que nao possuem livros\n");
+    printf("[H] Exibir estrutura\n");
+    printf("[ESC] Sair\n");
+    printf("Selecione uma opcao: ");
     return toupper(getche());
+}
+
+void exibeAutorSemLivro(tpAutor *autor, tpEditora *editora)
+{
+    int aux, todos = 0;
+    tpEditora *editoraAuxiliar;
+    tpLivros *livroAuxiliar;
+    tpListaAutores *listaAuxiliar;
+
+    while (autor != NULL)
+    {
+        editoraAuxiliar = editora;
+        aux = 0;
+        while (editoraAuxiliar != NULL)
+        {
+            livroAuxiliar = editoraAuxiliar->livros;
+            while (livroAuxiliar != NULL)
+            {
+                listaAuxiliar = livroAuxiliar->autores;
+                while (listaAuxiliar != NULL)
+                {
+                    if (strcmp(listaAuxiliar->endereco->nome, autor->nome) == 0 && strcmp(listaAuxiliar->endereco->sobrenome, autor->sobrenome) == 0)
+                    {
+                        listaAuxiliar = NULL;
+                        aux++;
+                    }
+                    else
+                        listaAuxiliar = listaAuxiliar->proximo;
+                }
+                if (aux == 0)
+                {
+                    livroAuxiliar = livroAuxiliar->proximo;
+                }
+                else
+                {
+                    livroAuxiliar = NULL;
+                }
+            }
+            editoraAuxiliar = editoraAuxiliar->proximo;
+        }
+        if (aux == 0)
+        {
+            printf("\n## Autor: %s %s ##", autor->nome, autor->sobrenome);
+            todos++;
+        }
+        autor = autor->proximo;
+    }
+    if (todos == 0)
+    {
+        // nao entrou no if que conta se tem mais 1 sem livro
+        printf("\n## Todos autores tem livros no momento ##");
+    }
 }
 
 int main()
 {
-
     tpDescritor descritor;
-    inicializarDescritor(descritor);
     tpAutor *autor;
-    arquivoTextoParaBinario();
+    inicializarDescritor(descritor);
     autor = inicializarEstruturaAutores();
-    inicializarEstruturaPrincipal(autor, descritor);
-    exibeEditora(descritor.inicio);
-    excluirLivro("Estruturas de dados usando C", descritor);
-
-    // exibir();
-
-    exibeEditora(descritor.inicio);
-    // exibeAutores(autor);
-
+    char op;
+    do
+    {
+        op = menu();
+        switch (op)
+        {
+        case 'A':
+            arquivoTextoParaBinario();
+            printf("\nArquivo gerado\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'B':
+            exibir();
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'C':
+            inicializarEstruturaPrincipal(autor, descritor);
+            printf("\nEstrutura inicializada\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'D':
+            char nomeDoLivro[100];
+            printf("\nDigite o nome do livro: ");
+            gets(nomeDoLivro);
+            excluirLivro(nomeDoLivro, descritor);
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'E':
+            exibirLivroDosAutores(autor, descritor.inicio);
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'F':
+            exibeLivrosEditora(descritor.inicio);
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'G':
+            exibeAutorSemLivro(autor, descritor.inicio);
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        case 'H':
+            exibeEditora(descritor.inicio);
+            printf("\nDigite algo para voltar...");
+            getch();
+            system("cls");
+            break;
+        default:
+            system("cls");
+            break;
+        }
+    } while (op != 27);
     return 0;
 }
