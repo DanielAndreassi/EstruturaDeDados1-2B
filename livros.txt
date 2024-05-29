@@ -5,4 +5,4 @@ TENENBAUM, Aaron M.; LANGSAM, Yedidyah; AUGENSTEIN, Moshe; SOUZA, Teresa Cristin
 SANTOS, Clesio Saraiva; FURTADO, Antonio; VELOSO, Paulo A. S.|Estruturas de dados|Campus|1986|228
 SALIBA, Walter Luiz Caram; ASSUMPCAO FILHO, Milton Mira de|Tecnicas de programacao: uma abordagem estruturada|Makron Books|1993|141
 SZWARCFITER, Jayme Luiz; MARKENZON, Lilian|Estruturas de dados e seus algoritmos|Livros Tecnicos e Cientificos|1994|320
-WIRTH, Niklaus; CHENG, Mei Lee|Algoritmos e estruturas de dados|Prentice-Hall do Brasil|1989|225
+WIRTH, Niklaus; CHENG, Mei Lee; ZIVIANI, Nivio|Algoritmos e estruturas de dados|Prentice-Hall do Brasil|1989|225
